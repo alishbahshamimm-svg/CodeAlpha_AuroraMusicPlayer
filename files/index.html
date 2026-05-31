@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurora Music Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo">
+        <div class="logo-icon-wrap">
+          <i class="fa-solid fa-waveform-lines logo-wave"></i>
+        </div>
+        <span class="loading-brand">Aurora</span>
+      </div>
+      <div class="loading-bars">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p class="loading-text">Initializing your experience...</p>
+    </div>
+  </div>
+
+  <!-- ===== TOAST NOTIFICATION ===== -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ===== PARTICLES BACKGROUND ===== -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ===== MAIN APP WRAPPER ===== -->
+  <div class="app-wrapper">
+
+    <!-- ===== LEFT SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+
+        <!-- Logo -->
+        <div class="sidebar-logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-waveform-lines"></i>
+          </div>
+          <div class="logo-text">
+            <span class="logo-name">Aurora</span>
+            <span class="logo-sub">Music Player</span>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+          <p class="nav-label">MAIN MENU</p>
+          <ul class="nav-list">
+            <li class="nav-item active" data-page="home">
+              <span class="nav-active-bar"></span>
+              <i class="fa-solid fa-house-music nav-icon"></i>
+              <span class="nav-text">Home</span>
+              <span class="nav-badge">New</span>
+            </li>
+            <li class="nav-item" data-page="discover">
+              <i class="fa-solid fa-compass nav-icon"></i>
+              <span class="nav-text">Discover</span>
+            </li>
+            <li class="nav-item" data-page="favorites">
+              <i class="fa-solid fa-heart nav-icon"></i>
+              <span class="nav-text">Favorites</span>
+              <span class="nav-count" id="fav-count">0</span>
+            </li>
+            <li class="nav-item" data-page="library">
+              <i class="fa-solid fa-music nav-icon"></i>
+              <span class="nav-text">Library</span>
+            </li>
+            <li class="nav-item" data-page="playlists">
+              <i class="fa-solid fa-list-music nav-icon"></i>
+              <span class="nav-text">Playlists</span>
+            </li>
+          </ul>
+
+          <p class="nav-label" style="margin-top: 24px;">SETTINGS</p>
+          <ul class="nav-list">
+            <li class="nav-item" data-page="settings">
+              <i class="fa-solid fa-sliders nav-icon"></i>
+              <span class="nav-text">Settings</span>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle-wrap">
+          <i class="fa-solid fa-moon theme-icon" id="theme-icon"></i>
+          <div class="theme-toggle" id="theme-toggle">
+            <div class="theme-thumb"></div>
+          </div>
+          <i class="fa-solid fa-sun theme-icon"></i>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="user-avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name">Alex Rivera</span>
+            <span class="user-plan">Premium</span>
+          </div>
+          <i class="fa-solid fa-ellipsis-vertical" style="color: var(--text-secondary); cursor:pointer;"></i>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ===== CENTER — MAIN PLAYER ===== -->
+    <main class="player-main">
+
+      <!-- Top Bar -->
+      <header class="player-topbar">
+        <div class="topbar-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search songs, artists, albums…" id="search-input" />
+        </div>
+        <div class="topbar-actions">
+          <button class="topbar-btn" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot"></span>
+          </button>
+          <button class="topbar-btn" title="Downloads">
+            <i class="fa-solid fa-arrow-down-to-line"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Hero / Album Art + Player -->
+      <section class="player-hero">
+
+        <!-- Glow behind album -->
+        <div class="album-glow" id="album-glow"></div>
+
+        <!-- Album Art Card -->
+        <div class="album-card-wrap">
+          <div class="album-card" id="album-card">
+            <img src="" alt="Album Art" id="album-art" class="album-art" />
+            <div class="album-vinyl"></div>
+          </div>
+          <!-- Floating vinyl disc -->
+          <div class="vinyl-disc" id="vinyl-disc">
+            <div class="vinyl-center"></div>
+          </div>
+        </div>
+
+        <!-- Song Info & Controls -->
+        <div class="player-controls-section">
+
+          <!-- Song Info -->
+          <div class="song-info">
+            <div class="song-meta-top">
+              <span class="song-genre" id="song-genre">Electronic</span>
+              <span class="song-number" id="song-number">01 / 08</span>
+            </div>
+            <h1 class="song-title" id="song-title">Loading...</h1>
+            <p class="song-artist" id="song-artist">Artist Name</p>
+            <p class="song-album" id="song-album">Album Name</p>
+          </div>
+
+          <!-- Audio Visualizer -->
+          <div class="visualizer" id="visualizer">
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-section">
+            <span class="time-current" id="time-current">0:00</span>
+            <div class="progress-bar-wrap" id="progress-bar-wrap">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+                <div class="progress-thumb" id="progress-thumb"></div>
+              </div>
+            </div>
+            <span class="time-total" id="time-total">0:00</span>
+          </div>
+
+          <!-- Playback Controls -->
+          <div class="controls-row">
+            <button class="ctrl-btn ctrl-sm" id="btn-shuffle" title="Shuffle (S)">
+              <i class="fa-solid fa-shuffle"></i>
+            </button>
+            <button class="ctrl-btn ctrl-md" id="btn-prev" title="Previous (←)">
+              <i class="fa-solid fa-backward-step"></i>
+            </button>
+            <button class="ctrl-btn ctrl-play" id="btn-play" title="Play/Pause (Space)">
+              <span class="play-ripple"></span>
+              <i class="fa-solid fa-play" id="play-icon"></i>
+            </button>
+            <button class="ctrl-btn ctrl-md" id="btn-next" title="Next (→)">
+              <i class="fa-solid fa-forward-step"></i>
+            </button>
+            <button class="ctrl-btn ctrl-sm" id="btn-repeat" title="Repeat (R)">
+              <i class="fa-solid fa-repeat"></i>
+            </button>
+          </div>
+
+          <!-- Secondary Controls: Volume + Favorite + Add -->
+          <div class="secondary-controls">
+            <button class="ctrl-btn ctrl-xs fav-btn" id="btn-fav" title="Favorite (F)">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+            <div class="volume-control">
+              <button class="ctrl-btn ctrl-xs" id="btn-mute" title="Mute (M)">
+                <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+              </button>
+              <div class="volume-slider-wrap">
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="70" />
+              </div>
+              <span class="volume-value" id="volume-value">70</span>
+            </div>
+            <button class="ctrl-btn ctrl-xs" id="btn-add" title="Add to Playlist">
+              <i class="fa-solid fa-circle-plus"></i>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Hidden Audio Element -->
+      <audio id="audio-player" preload="auto"></audio>
+
+    </main>
+
+    <!-- ===== RIGHT SIDEBAR ===== -->
+    <aside class="right-sidebar">
+      <div class="right-sidebar-inner">
+
+        <!-- Up Next -->
+        <section class="rs-section">
+          <div class="rs-header">
+            <h3 class="rs-title">Up Next</h3>
+            <button class="rs-action" id="btn-clear-queue">Clear</button>
+          </div>
+          <ul class="queue-list" id="queue-list">
+            <!-- Populated by JS -->
+          </ul>
+        </section>
+
+        <!-- Recently Played -->
+        <section class="rs-section">
+          <div class="rs-header">
+            <h3 class="rs-title">Recently Played</h3>
+            <button class="rs-action">See All</button>
+          </div>
+          <ul class="recent-list" id="recent-list">
+            <!-- Populated by JS -->
+          </ul>
+        </section>
+
+        <!-- Favorites -->
+        <section class="rs-section">
+          <div class="rs-header">
+            <h3 class="rs-title">Favorites</h3>
+            <button class="rs-action">See All</button>
+          </div>
+          <ul class="fav-list" id="fav-list">
+            <!-- Populated by JS -->
+          </ul>
+        </section>
+
+      </div>
+    </aside>
+
+  </div><!-- /.app-wrapper -->
+
+  <script src="script.js"></script>
+</body>
+</html>
